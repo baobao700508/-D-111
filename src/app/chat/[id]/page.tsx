@@ -6,6 +6,16 @@ import { useParams } from 'next/navigation'
 import ChatContainer from '@/components/layout/ChatContainer'
 import MessageList, { Message } from '@/components/features/MessageList'
 import MessageInput from '@/components/features/MessageInput'
+import { AppError } from '@/types/error'
+
+// 定义会话消息类型
+interface SessionMessage {
+  id: string;
+  content: string;
+  sender: string;
+  timestamp: string | Date;
+  chatSessionId: string;
+}
 
 export default function ChatPage() {
   // 获取动态参数
@@ -35,7 +45,7 @@ export default function ChatPage() {
         
         // 格式化消息
         if (session.messages && session.messages.length > 0) {
-          const formattedMessages = session.messages.map((msg: any) => ({
+          const formattedMessages = session.messages.map((msg: SessionMessage) => ({
             id: msg.id,
             content: msg.content,
             sender: msg.sender as 'user' | 'ai',
@@ -54,8 +64,9 @@ export default function ChatPage() {
             }
           ])
         }
-      } catch (error) {
-        console.error('获取会话失败:', error)
+      } catch (error: unknown) {
+        const appError = error as AppError;
+        console.error('获取会话失败:', appError)
         setError('获取会话失败，请尝试刷新页面')
       }
     }
@@ -106,9 +117,10 @@ export default function ChatPage() {
       }
       
       setMessages(prev => [...prev, aiMessage])
-    } catch (error: any) {
-      console.error('发送消息错误:', error)
-      setError(error.message || '发送消息失败，请重试')
+    } catch (error: unknown) {
+      const appError = error as AppError;
+      console.error('发送消息错误:', appError)
+      setError(appError.message || '发送消息失败，请重试')
     } finally {
       setIsLoading(false)
     }

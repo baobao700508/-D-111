@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { ArrowLeft, Moon, Sun, Globe, Key } from 'lucide-react'
 import Link from 'next/link'
+import { AppError } from '@/types/error'
 
 interface SettingItemProps {
   icon: React.ReactNode
@@ -48,8 +49,9 @@ const Settings = () => {
           const data = await response.json();
           setHasApiKey(data.hasApiKey);
         }
-      } catch (error) {
-        console.error('获取配置失败:', error);
+      } catch (error: unknown) {
+        const appError = error as AppError;
+        console.error('获取配置失败:', appError);
       }
     };
 
@@ -84,8 +86,9 @@ const Settings = () => {
         const error = await response.json();
         setErrorMessage(error.error || '保存失败');
       }
-    } catch (error: any) {
-      setErrorMessage(error.message || '保存失败');
+    } catch (error: unknown) {
+      const appError = error as AppError;
+      setErrorMessage(appError.message || '保存失败');
     } finally {
       setIsLoading(false);
     }

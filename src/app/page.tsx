@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { initDatabase } from '@/lib/init-db'
 
 export default function Home() {
   const [error, setError] = useState<string | null>(null)

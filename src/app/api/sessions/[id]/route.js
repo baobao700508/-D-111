@@ -1,14 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { AppError } from '@/types/error';
 
 // 获取特定聊天会话及其消息
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request, { params }) {
   try {
-    const id = await params.id;
+    const id = params.id;
     
     // 查找会话
     const session = await prisma.chatSession.findUnique({
@@ -28,23 +24,19 @@ export async function GET(
     }
     
     return NextResponse.json(session);
-  } catch (error: unknown) {
-    const appError = error as AppError;
-    console.error('获取会话详情失败:', appError);
+  } catch (error) {
+    console.error('获取会话详情失败:', error);
     return NextResponse.json(
-      { error: appError.message || '获取会话详情时出错' },
+      { error: error.message || '获取会话详情时出错' },
       { status: 500 }
     );
   }
 }
 
 // 更新会话标题
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request, { params }) {
   try {
-    const id = await params.id;
+    const id = params.id;
     const { title } = await request.json();
     
     if (!title) {
@@ -61,23 +53,19 @@ export async function PATCH(
     });
     
     return NextResponse.json(updatedSession);
-  } catch (error: unknown) {
-    const appError = error as AppError;
-    console.error('更新会话失败:', appError);
+  } catch (error) {
+    console.error('更新会话失败:', error);
     return NextResponse.json(
-      { error: appError.message || '更新会话时出错' },
+      { error: error.message || '更新会话时出错' },
       { status: 500 }
     );
   }
 }
 
 // 删除会话
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request, { params }) {
   try {
-    const id = await params.id;
+    const id = params.id;
     
     // 删除会话（关联的消息会通过级联删除一起删除）
     await prisma.chatSession.delete({
@@ -85,11 +73,10 @@ export async function DELETE(
     });
     
     return NextResponse.json({ success: true });
-  } catch (error: unknown) {
-    const appError = error as AppError;
-    console.error('删除会话失败:', appError);
+  } catch (error) {
+    console.error('删除会话失败:', error);
     return NextResponse.json(
-      { error: appError.message || '删除会话时出错' },
+      { error: error.message || '删除会话时出错' },
       { status: 500 }
     );
   }

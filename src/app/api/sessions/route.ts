@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { AppError } from '@/types/error';
 
 // 获取所有聊天会话
 export async function GET() {
@@ -15,10 +16,11 @@ export async function GET() {
     });
     
     return NextResponse.json(sessions);
-  } catch (error: any) {
-    console.error('获取会话失败:', error);
+  } catch (error: unknown) {
+    const appError = error as AppError;
+    console.error('获取会话失败:', appError);
     return NextResponse.json(
-      { error: error.message || '获取会话时出错' },
+      { error: appError.message || '获取会话时出错' },
       { status: 500 }
     );
   }
@@ -42,10 +44,11 @@ export async function POST(request: NextRequest) {
     });
     
     return NextResponse.json(session);
-  } catch (error: any) {
-    console.error('创建会话失败:', error);
+  } catch (error: unknown) {
+    const appError = error as AppError;
+    console.error('创建会话失败:', appError);
     return NextResponse.json(
-      { error: error.message || '创建会话时出错' },
+      { error: appError.message || '创建会话时出错' },
       { status: 500 }
     );
   }

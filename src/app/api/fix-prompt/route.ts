@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { AppError } from '@/types/error';
 
 export async function GET() {
   try {
@@ -51,10 +52,11 @@ export async function GET() {
         new_prompt: newConfig.systemPrompt.substring(0, 30) + "..."
       });
     }
-  } catch (error: any) {
-    console.error('修复系统提示词失败:', error);
+  } catch (error: unknown) {
+    const appError = error as AppError;
+    console.error('修复系统提示词失败:', appError);
     return NextResponse.json(
-      { error: error.message || '修复系统提示词失败' },
+      { error: appError.message || '修复系统提示词失败' },
       { status: 500 }
     );
   }

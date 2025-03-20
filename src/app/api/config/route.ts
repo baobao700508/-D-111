@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { AppError } from '@/types/error';
 
 // 获取用户配置
 export async function GET() {
@@ -18,10 +19,11 @@ export async function GET() {
     return NextResponse.json({
       hasApiKey: !!userConfig.openaiKey && userConfig.openaiKey.trim() !== '',
     });
-  } catch (error: any) {
-    console.error('获取用户配置失败:', error);
+  } catch (error: unknown) {
+    const appError = error as AppError;
+    console.error('获取用户配置失败:', appError);
     return NextResponse.json(
-      { error: error.message || '获取用户配置时出错' },
+      { error: appError.message || '获取用户配置时出错' },
       { status: 500 }
     );
   }
@@ -54,10 +56,11 @@ export async function POST(request: NextRequest) {
         hasApiKey: !!newConfig.openaiKey && newConfig.openaiKey.trim() !== '',
       });
     }
-  } catch (error: any) {
-    console.error('更新用户配置失败:', error);
+  } catch (error: unknown) {
+    const appError = error as AppError;
+    console.error('更新用户配置失败:', appError);
     return NextResponse.json(
-      { error: error.message || '更新用户配置时出错' },
+      { error: appError.message || '更新用户配置时出错' },
       { status: 500 }
     );
   }

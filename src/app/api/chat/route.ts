@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { chatWithOpenAI } from '@/lib/openai-service';
+import { AppError } from '@/types/error';
 
 // 处理发送消息
 export async function POST(request: NextRequest) {
@@ -55,10 +56,11 @@ export async function POST(request: NextRequest) {
       userMessage,
       aiResponse,
     });
-  } catch (error: any) {
-    console.error('聊天处理错误:', error);
+  } catch (error: unknown) {
+    const appError = error as AppError;
+    console.error('聊天处理错误:', appError);
     return NextResponse.json(
-      { error: error.message || '处理请求时出错' },
+      { error: appError.message || '处理请求时出错' },
       { status: 500 }
     );
   }

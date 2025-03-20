@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { AppError } from '@/types/error';
 
 // 获取特定聊天会话及其消息
 export async function GET(
@@ -27,10 +28,11 @@ export async function GET(
     }
     
     return NextResponse.json(session);
-  } catch (error: any) {
-    console.error('获取会话详情失败:', error);
+  } catch (error: unknown) {
+    const appError = error as AppError;
+    console.error('获取会话详情失败:', appError);
     return NextResponse.json(
-      { error: error.message || '获取会话详情时出错' },
+      { error: appError.message || '获取会话详情时出错' },
       { status: 500 }
     );
   }
@@ -59,10 +61,11 @@ export async function PATCH(
     });
     
     return NextResponse.json(updatedSession);
-  } catch (error: any) {
-    console.error('更新会话失败:', error);
+  } catch (error: unknown) {
+    const appError = error as AppError;
+    console.error('更新会话失败:', appError);
     return NextResponse.json(
-      { error: error.message || '更新会话时出错' },
+      { error: appError.message || '更新会话时出错' },
       { status: 500 }
     );
   }
@@ -82,10 +85,11 @@ export async function DELETE(
     });
     
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    console.error('删除会话失败:', error);
+  } catch (error: unknown) {
+    const appError = error as AppError;
+    console.error('删除会话失败:', appError);
     return NextResponse.json(
-      { error: error.message || '删除会话时出错' },
+      { error: appError.message || '删除会话时出错' },
       { status: 500 }
     );
   }

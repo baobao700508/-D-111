@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { AppError } from '@/types/error';
 
 export async function GET() {
   try {
@@ -26,9 +27,10 @@ export async function GET() {
       },
       nodeEnv: process.env.NODE_ENV || '未设置'
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const appError = error as AppError;
     return NextResponse.json(
-      { error: error.message || '获取环境变量失败' },
+      { error: appError.message || '获取环境变量失败' },
       { status: 500 }
     );
   }

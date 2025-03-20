@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { prisma } from './prisma';
+import { AppError } from '@/types/error';
 
 // OpenAI接口类型
 interface Message {
@@ -76,9 +77,10 @@ async function createOpenAIClient() {
     return new OpenAI({
       apiKey,
     });
-  } catch (error) {
-    console.error('创建OpenAI客户端失败:', error);
-    throw error;
+  } catch (error: unknown) {
+    const appError = error as AppError;
+    console.error('创建OpenAI客户端失败:', appError);
+    throw appError;
   }
 }
 
@@ -129,9 +131,10 @@ export async function chatWithOpenAI(messages: { content: string; sender: 'user'
     });
     
     return responseContent;
-  } catch (error) {
-    console.error('OpenAI API调用失败:', error);
-    console.error('详细错误信息:', JSON.stringify(error, null, 2));
-    throw error;
+  } catch (error: unknown) {
+    const appError = error as AppError;
+    console.error('OpenAI API调用失败:', appError);
+    console.error('详细错误信息:', JSON.stringify(appError, null, 2));
+    throw appError;
   }
 } 

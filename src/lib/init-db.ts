@@ -1,4 +1,5 @@
 import { prisma } from './prisma'
+import { AppError } from '@/types/error'
 
 // 初始化系统配置
 export async function initSystemConfig() {
@@ -67,8 +68,9 @@ export async function initSystemConfig() {
         console.log('无需更新系统配置');
       }
     }
-  } catch (error) {
-    console.error('初始化系统配置失败:', error);
+  } catch (error: unknown) {
+    const appError = error as AppError;
+    console.error('初始化系统配置失败:', appError);
   }
 }
 
@@ -87,8 +89,9 @@ export async function initUserConfig() {
       })
       console.log('已创建默认用户配置')
     }
-  } catch (error) {
-    console.error('初始化用户配置失败:', error);
+  } catch (error: unknown) {
+    const appError = error as AppError;
+    console.error('初始化用户配置失败:', appError);
   }
 }
 
@@ -98,7 +101,9 @@ export async function initDatabase() {
     await initSystemConfig()
     await initUserConfig()
     console.log('数据库初始化完成')
-  } catch (error) {
-    console.error('数据库初始化失败:', error)
+  } catch (error: unknown) {
+    const appError = error as AppError;
+    console.error('数据库初始化失败:', appError)
+    throw appError;
   }
 } 

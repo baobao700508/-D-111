@@ -6,12 +6,6 @@
       "use": "@vercel/next"
     }
   ],
-  "crons": [
-    {
-      "path": "/api/init",
-      "schedule": "0 0 * * *"
-    }
-  ],
   "env": {
     "NEXT_PUBLIC_VERCEL_ENV": "production"
   },

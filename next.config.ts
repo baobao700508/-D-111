@@ -13,12 +13,10 @@ const nextConfig: NextConfig = {
   },
   // 确保环境变量更新后重新加载
   experimental: {
-    serverActions: {
-      bodySizeLimit: '5mb',
-    },
+    // 移除不推荐使用的配置
   },
-  // 新的位置：将serverComponentsExternalPackages移到这里
-  serverExternalPackages: [],
+  // 更新到新的配置位置
+  serverExternalPackages: ['prisma', '@prisma/client'],
   // 输出独立构建版本
   output: 'standalone',
   // 输出更详细的日志

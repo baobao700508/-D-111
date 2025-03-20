@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 开发环境使用SQLite，生产环境使用PostgreSQL
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // 如果环境变量不存在，则使用SQLite（用于本地开发）
+  relationMode = "foreignKeys"
+}
+
+// 系统配置模型，存储OpenAI Key和System Prompt
+model SystemConfig {
+  id           String   @id @default(uuid())
+  openaiKey    String?  // 环境变量中的OpenAI Key
+  systemPrompt String   // 系统预设的提示词
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// 用户配置模型，存储用户自定义的API Key
+model UserConfig {
+  id        String   @id @default(uuid())
+  openaiKey String?  // 用户自定义的OpenAI Key
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 聊天会话模型
+model ChatSession {
+  id        String    @id @default(uuid())
+  title     String    // 聊天会话标题
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[] // 关联的消息
+}
+
+// 消息模型
+model Message {
+  id            String      @id @default(uuid())
+  content       String      // 消息内容
+  sender        String      // 发送者 (user/ai)
+  timestamp     DateTime    @default(now())
+  chatSession   ChatSession @relation(fields: [chatSessionId], references: [id], onDelete: Cascade)
+  chatSessionId String      // 外键，关联聊天会话
+}

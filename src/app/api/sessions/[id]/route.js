@@ -4,7 +4,9 @@ import { prisma } from '@/lib/prisma';
 // 获取特定聊天会话及其消息
 export async function GET(request, { params }) {
   try {
-    const id = params.id;
+    // 确保异步获取参数
+    const paramsObj = await params;
+    const { id } = paramsObj;
     
     // 查找会话
     const session = await prisma.chatSession.findUnique({
@@ -36,7 +38,9 @@ export async function GET(request, { params }) {
 // 更新会话标题
 export async function PATCH(request, { params }) {
   try {
-    const id = params.id;
+    // 确保异步获取参数
+    const paramsObj = await params;
+    const { id } = paramsObj;
     const { title } = await request.json();
     
     if (!title) {
@@ -65,7 +69,9 @@ export async function PATCH(request, { params }) {
 // 删除会话
 export async function DELETE(request, { params }) {
   try {
-    const id = params.id;
+    // 确保异步获取参数
+    const paramsObj = await params;
+    const { id } = paramsObj;
     
     // 删除会话（关联的消息会通过级联删除一起删除）
     await prisma.chatSession.delete({

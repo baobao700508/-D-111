@@ -8,11 +8,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// 开发环境使用SQLite，生产环境使用PostgreSQL
+// 使用远程PostgreSQL数据库
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  // 如果环境变量不存在，则使用SQLite（用于本地开发）
+  // PostgreSQL连接配置
   relationMode = "foreignKeys"
 }
 

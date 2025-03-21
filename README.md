@@ -70,3 +70,98 @@ MIT
 ---
 
 Created with ❤️ 使用Next.js和OpenAI API
+
+## Docker部署指南
+
+本项目已配置Docker支持，解决了在服务器上"获取会话失败"的问题。主要原因包括：
+
+1. 数据库连接问题 - Docker配置中已添加PostgreSQL数据库服务
+2. 环境变量配置问题 - 通过Docker环境变量传递配置
+3. API路由500错误问题 - 通过合适的容器设置和启动顺序解决
+
+### 快速部署
+
+1. 确保安装了Docker和docker-compose
+2. 检查`.env`文件中的配置（特别是OpenAI API Key）
+3. 执行部署脚本：
+
+```bash
+# 给脚本添加执行权限
+chmod +x scripts/deploy.sh
+
+# 运行部署脚本
+./scripts/deploy.sh
+```
+
+### 手动部署步骤
+
+如果不使用脚本，您也可以手动执行以下命令：
+
+```bash
+# 构建并启动容器
+docker-compose up -d
+
+# 查看应用日志
+docker-compose logs -f app
+```
+
+### 常见问题排查
+
+#### 会话获取失败问题
+
+如果遇到"获取会话失败"的错误：
+
+1. 检查数据库连接：
+   ```bash
+   docker-compose logs postgres
+   ```
+
+2. 检查应用日志：
+   ```bash
+   docker-compose logs app
+   ```
+
+3. 确认API响应：
+   ```bash
+   curl http://localhost:3000/api/sessions
+   ```
+
+#### 500内部服务器错误
+
+如果API返回500错误：
+
+1. 检查Prisma连接：
+   ```bash
+   # 进入应用容器
+   docker-compose exec app sh
+   
+   # 检查数据库连接
+   npx prisma db pull
+   ```
+
+2. 重启应用容器：
+   ```bash
+   docker-compose restart app
+   ```
+
+## 本地开发
+
+如需在本地开发环境运行：
+
+```bash
+# 安装依赖
+npm install
+
+# 生成Prisma客户端
+npx prisma generate
+
+# 启动开发服务器
+npm run dev
+```
+
+## 技术栈
+
+- **前端框架**：Next.js 15
+- **数据库**：PostgreSQL (通过Prisma ORM访问)
+- **AI接口**：OpenAI API
+- **容器化**：Docker & docker-compose

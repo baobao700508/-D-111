@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # PostgreSQL数据库服务
+  postgres:
+    image: postgres:16-alpine
+    container_name: cal-ai-postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: calai
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - cal-ai-network
+
+  # Next.js应用
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cal-ai-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      # 数据库连接
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/calai
+      # OpenAI配置（从.env文件中读取）
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      DEFAULT_SYSTEM_PROMPT: ${DEFAULT_SYSTEM_PROMPT}
+      # 确保服务器的网络设置
+      HOSTNAME: "0.0.0.0"
+      PORT: 3000
+      # 生产环境配置
+      NODE_ENV: production
+    depends_on:
+      - postgres
+    networks:
+      - cal-ai-network
+
+# 持久化卷
+volumes:
+  postgres-data:
+    name: cal-ai-postgres-data
+
+# 网络配置
+networks:
+  cal-ai-network:
+    name: cal-ai-network 

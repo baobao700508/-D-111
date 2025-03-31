@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI学习平台",
+  title: "Caleb's AI platform",
   description: "编程学习的AI助手平台",
 };
 

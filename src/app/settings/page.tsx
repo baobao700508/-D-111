@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { ArrowLeft, Moon, Sun, Globe, Key } from 'lucide-react'
 import Link from 'next/link'
 import { AppError } from '@/types/error'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface SettingItemProps {
   icon: React.ReactNode
@@ -32,8 +33,8 @@ const SettingItem = ({ icon, title, description, children }: SettingItemProps) =
 }
 
 const Settings = () => {
+  const { t, language, setLanguage } = useLanguage()
   const [theme, setTheme] = useState('dark')
-  const [language, setLanguage] = useState('zh')
   const [openaiKey, setOpenaiKey] = useState('')
   const [hasApiKey, setHasApiKey] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -76,22 +77,28 @@ const Settings = () => {
       if (response.ok) {
         const data = await response.json();
         setHasApiKey(data.hasApiKey);
-        setSuccessMessage('API Key 保存成功');
+        setSuccessMessage(t('settings.save_success'));
         
         // 如果用户清空了API Key，显示相应消息
         if (!openaiKey.trim()) {
-          setSuccessMessage('API Key 已清空，将使用系统默认Key');
+          setSuccessMessage(t('settings.api_key_cleared'));
         }
       } else {
         const error = await response.json();
-        setErrorMessage(error.error || '保存失败');
+        setErrorMessage(error.error || t('settings.save_failed'));
       }
     } catch (error: unknown) {
       const appError = error as AppError;
-      setErrorMessage(appError.message || '保存失败');
+      setErrorMessage(appError.message || t('settings.save_failed'));
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // 处理语言更改
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLanguage = e.target.value as 'zh' | 'en';
+    setLanguage(newLanguage);
   };
 
   return (
@@ -100,9 +107,9 @@ const Settings = () => {
       <div className="h-16 border-b border-zinc-800 flex items-center px-4">
         <Link href="/" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
           <ArrowLeft size={20} />
-          <span>返回</span>
+          <span>{t('settings.back')}</span>
         </Link>
-        <h1 className="text-xl font-medium mx-auto">设置</h1>
+        <h1 className="text-xl font-medium mx-auto">{t('settings.title')}</h1>
       </div>
 
       {/* 设置选项 */}
@@ -110,15 +117,15 @@ const Settings = () => {
         {/* OpenAI API Key 设置 */}
         <SettingItem 
           icon={<Key size={20} />}
-          title="OpenAI API Key"
-          description={hasApiKey ? "已设置自定义API Key" : "使用系统默认API Key"}
+          title={t('settings.api_key')}
+          description={hasApiKey ? t('settings.api_key_custom') : t('settings.api_key_default')}
         >
           <div className="flex flex-col gap-2 w-64">
             <input 
               type="password"
               value={openaiKey}
               onChange={(e) => setOpenaiKey(e.target.value)}
-              placeholder="输入您的OpenAI API Key"
+              placeholder={t('settings.api_key_placeholder')}
               className="bg-zinc-800 text-white border border-zinc-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
             />
             <button 
@@ -126,7 +133,7 @@ const Settings = () => {
               disabled={isLoading}
               className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
             >
-              {isLoading ? '保存中...' : '保存'}
+              {isLoading ? t('settings.saving') : t('settings.save')}
             </button>
             {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
             {successMessage && <p className="text-green-500 text-sm">{successMessage}</p>}
@@ -135,28 +142,28 @@ const Settings = () => {
 
         <SettingItem 
           icon={theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
-          title="主题"
-          description="调整界面外观"
+          title={t('settings.theme')}
+          description={t('settings.theme_desc')}
         >
           <select 
             value={theme}
             onChange={(e) => setTheme(e.target.value)}
             className="bg-zinc-800 text-white border border-zinc-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="light">浅色</option>
-            <option value="dark">深色</option>
-            <option value="system">跟随系统</option>
+            <option value="light">{t('settings.theme_light')}</option>
+            <option value="dark">{t('settings.theme_dark')}</option>
+            <option value="system">{t('settings.theme_system')}</option>
           </select>
         </SettingItem>
 
         <SettingItem 
           icon={<Globe size={20} />}
-          title="语言"
-          description="选择界面语言"
+          title={t('settings.language')}
+          description={t('settings.language_desc')}
         >
           <select 
             value={language}
-            onChange={(e) => setLanguage(e.target.value)}
+            onChange={handleLanguageChange}
             className="bg-zinc-800 text-white border border-zinc-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="zh">中文</option>

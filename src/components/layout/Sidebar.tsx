@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Settings, Plus, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 // 侧边栏聊天历史项组件
 const SidebarItem = ({ 
@@ -66,7 +67,7 @@ interface ChatItem {
 }
 
 // 格式化日期函数
-const formatDate = (dateString: string) => {
+const formatDate = (dateString: string, t: (key: string, ...args: any[]) => string) => {
   const date = new Date(dateString)
   const now = new Date()
   const yesterday = new Date(now)
@@ -74,24 +75,24 @@ const formatDate = (dateString: string) => {
   
   // 今天
   if (date.toDateString() === now.toDateString()) {
-    return '今天'
+    return t('app.today')
   }
   
   // 昨天
   if (date.toDateString() === yesterday.toDateString()) {
-    return '昨天'
+    return t('app.yesterday')
   }
   
   // 其他日期
-  return `${date.getMonth() + 1}月${date.getDate()}日`
+  return t('date.month_day', date.getMonth() + 1, date.getDate())
 }
 
 // 根据日期对聊天会话进行分组
-const groupChatsByDate = (chats: ChatItem[]) => {
+const groupChatsByDate = (chats: ChatItem[], t: (key: string, ...args: any[]) => string) => {
   const groups: Record<string, ChatItem[]> = {}
   
   chats.forEach(chat => {
-    const date = formatDate(chat.updatedAt)
+    const date = formatDate(chat.updatedAt, t)
     if (!groups[date]) {
       groups[date] = []
     }
@@ -102,6 +103,7 @@ const groupChatsByDate = (chats: ChatItem[]) => {
 }
 
 const Sidebar = () => {
+  const { t } = useLanguage()
   const [chatSessions, setChatSessions] = useState<ChatItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const pathname = usePathname()
@@ -113,22 +115,52 @@ const Sidebar = () => {
     : null
   
   // 获取所有聊天会话
-  useEffect(() => {
-    const fetchChatSessions = async () => {
-      try {
-        const response = await fetch('/api/sessions')
-        if (response.ok) {
-          const data = await response.json()
-          setChatSessions(data)
-        }
-      } catch (error) {
-        console.error('获取聊天会话失败:', error)
-      } finally {
-        setIsLoading(false)
+  const fetchChatSessions = async () => {
+    try {
+      const response = await fetch('/api/sessions')
+      if (response.ok) {
+        const data = await response.json()
+        setChatSessions(data)
       }
+    } catch (error) {
+      console.error('获取聊天会话失败:', error)
+    } finally {
+      setIsLoading(false)
     }
-    
+  }
+  
+  // 初次加载和currentChatId变化时获取会话
+  useEffect(() => {
     fetchChatSessions()
+  }, [currentChatId])
+  
+  // 设置定期刷新会话
+  useEffect(() => {
+    // 初次加载
+    fetchChatSessions()
+    
+    // 设置间隔刷新 (每3秒刷新一次)
+    const intervalId = setInterval(() => {
+      fetchChatSessions()
+    }, 3000)
+    
+    // 添加标题更新事件监听
+    const handleTitleUpdate = (event: CustomEvent) => {
+      const { id, title } = event.detail;
+      // 直接更新指定会话的标题
+      setChatSessions(prev => prev.map(session => 
+        session.id === id ? { ...session, title } : session
+      ));
+    };
+    
+    // 添加事件监听
+    window.addEventListener('chat-title-updated', handleTitleUpdate as EventListener);
+    
+    // 清理定时器和事件监听
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener('chat-title-updated', handleTitleUpdate as EventListener);
+    }
   }, [])
   
   // 创建新聊天
@@ -139,7 +171,7 @@ const Sidebar = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title: '新对话' }),
+        body: JSON.stringify({ title: t('chat.new_conversation') }),
       })
       
       if (response.ok) {
@@ -173,14 +205,14 @@ const Sidebar = () => {
   }
 
   // 按日期分组聊天会话
-  const groupedChats = groupChatsByDate(chatSessions)
+  const groupedChats = groupChatsByDate(chatSessions, t)
 
   return (
     <div className="w-64 h-screen bg-[#252526] flex flex-col">
       {/* 顶部Logo和设置区域 */}
       <div className="flex items-center justify-between p-4 border-b border-zinc-700">
         <div className="flex items-center">
-          <span className="text-xl font-bold text-white">Cal AI</span>
+          <span className="text-xl font-bold text-white">{t('app.name')}</span>
         </div>
         <Link href="/settings" className="text-zinc-400 hover:text-white transition-colors">
           <Settings size={20} />
@@ -194,7 +226,7 @@ const Sidebar = () => {
           className="w-full flex items-center justify-center gap-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-md py-2 px-4 transition-colors"
         >
           <Plus size={16} />
-          <span>新建聊天</span>
+          <span>{t('app.new_chat')}</span>
         </button>
       </div>
 
@@ -202,11 +234,11 @@ const Sidebar = () => {
       <div className="flex-1 overflow-y-auto">
         {isLoading ? (
           <div className="flex justify-center items-center h-20 text-zinc-400">
-            加载中...
+            {t('app.loading')}
           </div>
         ) : chatSessions.length === 0 ? (
           <div className="flex justify-center items-center h-20 text-zinc-400 text-sm px-4 text-center">
-            暂无聊天记录，点击上方按钮创建新对话
+            {t('app.no_records')}
           </div>
         ) : (
           groupedChats.map(([date, chats]) => (

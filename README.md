@@ -1,12 +1,13 @@
-# AI学习平台
+# Cal AI 智能助手
 
-基于Next.js和OpenAI构建的AI编程学习助手，提供智能聊天和编程学习支持。
+基于Next.js和OpenAI构建的智能聊天助手，提供智能对话和实时反馈。
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyourusername%2Fai-learning-platform&env=OPENAI_API_KEY,DEFAULT_SYSTEM_PROMPT&envDescription=API密钥和系统提示词配置&envLink=https://github.com/yourusername/ai-learning-platform#环境变量)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbaobao700508%2F-D-111&env=OPENAI_API_KEY,DEFAULT_SYSTEM_PROMPT&envDescription=API密钥和系统提示词配置&envLink=https://github.com/baobao700508/-D-111#环境变量)
 
 ## 功能特点
 
 - 💬 与AI助手实时聊天交流
+- 🤖 自动生成会话主题，轻松整理对话
 - 📚 获取编程学习路径和建议
 - 🔄 保存聊天记录和会话历史
 - 🎨 现代化黑暗主题UI设计
@@ -24,8 +25,8 @@
 
 1. 克隆仓库:
 ```bash
-git clone https://github.com/yourusername/ai-learning-platform.git
-cd ai-learning-platform
+git clone https://github.com/baobao700508/-D-111.git
+cd -D-111
 ```
 
 2. 安装依赖:
@@ -69,7 +70,7 @@ MIT
 
 ---
 
-Created with ❤️ 使用Next.js和OpenAI API
+Created by Liangjian Jin with ❤️ 使用Next.js和OpenAI API
 
 ## Docker部署指南
 

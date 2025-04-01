@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ArrowLeft, Moon, Sun, Globe, Key } from 'lucide-react'
+import { ArrowLeft, Moon, Sun, Globe, Key, Zap } from 'lucide-react'
 import Link from 'next/link'
 import { AppError } from '@/types/error'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useStreaming } from '@/contexts/StreamingContext'
+import ToggleSwitch from '@/components/ui/ToggleSwitch'
 
 interface SettingItemProps {
   icon: React.ReactNode
@@ -34,6 +36,7 @@ const SettingItem = ({ icon, title, description, children }: SettingItemProps) =
 
 const Settings = () => {
   const { t, language, setLanguage } = useLanguage()
+  const { useStreaming: streamingEnabled, setUseStreaming, isLoading: streamingLoading } = useStreaming()
   const [theme, setTheme] = useState('dark')
   const [openaiKey, setOpenaiKey] = useState('')
   const [hasApiKey, setHasApiKey] = useState(false)
@@ -95,10 +98,15 @@ const Settings = () => {
     }
   };
 
-  // 处理语言更改
-  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLanguage = e.target.value as 'zh' | 'en';
-    setLanguage(newLanguage);
+  // 处理语言切换
+  const handleLanguageChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLang = e.target.value as 'zh' | 'en';
+    await setLanguage(newLang);
+  };
+
+  // 处理流式生成切换
+  const handleStreamingChange = async (newValue: boolean) => {
+    await setUseStreaming(newValue);
   };
 
   return (
@@ -138,6 +146,20 @@ const Settings = () => {
             {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
             {successMessage && <p className="text-green-500 text-sm">{successMessage}</p>}
           </div>
+        </SettingItem>
+
+        <SettingItem 
+          icon={<Zap size={20} />}
+          title={t('settings.streaming')}
+          description={t('settings.streaming_desc')}
+        >
+          <ToggleSwitch
+            checked={streamingEnabled}
+            onChange={handleStreamingChange}
+            onLabel={t('settings.streaming_on')}
+            offLabel={t('settings.streaming_off')}
+            disabled={streamingLoading}
+          />
         </SettingItem>
 
         <SettingItem 

@@ -30,6 +30,7 @@ model UserConfig {
   id        String   @id @default(uuid())
   openaiKey String?  // 用户自定义的OpenAI Key
   language  String   @default("zh") // 用户界面语言，默认中文
+  useStreaming Boolean @default(true) // 是否使用流式生成，默认开启
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

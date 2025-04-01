@@ -8,6 +8,7 @@ import MessageList, { Message } from '@/components/features/MessageList'
 import MessageInput from '@/components/features/MessageInput'
 import { AppError } from '@/types/error'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useStreaming } from '@/contexts/StreamingContext'
 
 // 定义会话消息类型
 interface SessionMessage {
@@ -20,6 +21,7 @@ interface SessionMessage {
 
 export default function ChatPage() {
   const { t } = useLanguage()
+  const { useStreaming: streamingEnabled } = useStreaming()
   // 获取动态参数
   const params = useParams()
   const chatSessionId = params.id as string
@@ -29,7 +31,6 @@ export default function ChatPage() {
   const [title, setTitle] = useState(t('chat.new_conversation'))
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [useStreaming, setUseStreaming] = useState(true) // 是否使用流式生成
   
   // 获取会话和消息
   useEffect(() => {
@@ -222,7 +223,7 @@ export default function ChatPage() {
   // 处理发送消息 - 标准响应（保留原来的实现作为备选）
   const handleSendMessage = async (content: string) => {
     // 如果启用流式响应，使用流式处理函数
-    if (useStreaming) {
+    if (streamingEnabled) {
       return handleStreamMessage(content)
     }
     
@@ -320,11 +321,6 @@ export default function ChatPage() {
     }
   }
   
-  // 切换流式生成模式
-  const toggleStreaming = () => {
-    setUseStreaming(prev => !prev)
-  }
-  
   return (
     <ChatContainer title={title}>
       <div className="flex flex-col h-full">
@@ -334,14 +330,6 @@ export default function ChatPage() {
               {error}
             </div>
           )}
-          <div className="flex justify-end mb-2 mx-4">
-            <button 
-              onClick={toggleStreaming}
-              className={`text-xs px-2 py-1 rounded ${useStreaming ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-            >
-              {useStreaming ? '流式生成: 开启' : '流式生成: 关闭'}
-            </button>
-          </div>
           <MessageList messages={messages} />
           {isLoading && (
             <div className="flex justify-center my-4">

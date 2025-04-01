@@ -52,6 +52,10 @@ const translations: Record<Language, Record<string, string>> = {
     'settings.theme_system': '跟随系统',
     'settings.language': '语言',
     'settings.language_desc': '选择界面语言',
+    'settings.streaming': '流式生成',
+    'settings.streaming_desc': '实时显示AI回答过程',
+    'settings.streaming_on': '开启',
+    'settings.streaming_off': '关闭',
     
     // 日期
     'date.month_day': '{0}月{1}日',
@@ -94,6 +98,10 @@ const translations: Record<Language, Record<string, string>> = {
     'settings.theme_system': 'System',
     'settings.language': 'Language',
     'settings.language_desc': 'Select interface language',
+    'settings.streaming': 'Streaming Generation',
+    'settings.streaming_desc': 'Show AI response in real-time',
+    'settings.streaming_on': 'On',
+    'settings.streaming_off': 'Off',
     
     // Date
     'date.month_day': '{0}/{1}',

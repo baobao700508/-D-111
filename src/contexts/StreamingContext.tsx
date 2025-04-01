@@ -1,3 +1,5 @@
+'use client'
+
 import { createContext, useState, useEffect, ReactNode, useContext } from 'react'
 
 // 类型定义

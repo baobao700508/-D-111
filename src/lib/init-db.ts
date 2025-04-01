@@ -84,7 +84,9 @@ export async function initUserConfig() {
       // 如果没有，则创建一个默认的用户配置
       await prisma.userConfig.create({
         data: {
-          openaiKey: '' // 默认为空，用户可以在设置页面填写
+          openaiKey: '', // 默认为空，用户可以在设置页面填写
+          language: 'zh', // 默认中文
+          useStreaming: true // 默认开启流式生成
         }
       })
       console.log('已创建默认用户配置')

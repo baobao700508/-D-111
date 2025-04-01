@@ -145,7 +145,7 @@ export async function chatWithOpenAI(messages: { content: string; sender: 'user'
     
     // 调用OpenAI API
     const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4o',
       messages: formattedMessages,
       temperature: 0.7,
       max_tokens: 1000,
@@ -200,7 +200,7 @@ export async function chatWithOpenAIStream(messages: { content: string; sender: 
     
     // 调用OpenAI API并启用流式响应
     const stream = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4o',
       messages: formattedMessages,
       temperature: 0.7,
       stream: true, // 启用流式响应
@@ -240,7 +240,7 @@ export async function generateTopicTitle(messages: { content: string; sender: 'u
     
     // 调用OpenAI API
     const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4o',
       messages: formattedMessages,
       temperature: 0.7,
       max_tokens: 50,

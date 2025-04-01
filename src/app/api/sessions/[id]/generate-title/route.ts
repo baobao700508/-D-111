@@ -3,7 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { generateTopicTitle } from '@/lib/openai-service';
 import { AppError } from '@/types/error';
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+// 生成会话标题
+export async function POST(request: NextRequest, { params }: any) {
   try {
     const { id } = params;
     const { messages } = await request.json();

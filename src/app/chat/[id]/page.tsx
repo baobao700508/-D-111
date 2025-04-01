@@ -160,11 +160,7 @@ export default function ChatPage() {
                   // 消息完成，如果是第一次对话，处理标题生成
                   if (isFirstConversation) {
                     try {
-                      // 获取最新消息内容
-                      const updatedMessages = messages
-                        .concat(userMessage)
-                        .concat({...aiMessage, content: aiMessage.content})
-                      
+                      // 直接使用需要的消息，不创建未使用的变量
                       // 调用API生成并更新标题
                       const titleResponse = await fetch(`/api/sessions/${chatSessionId}/generate-title`, {
                         method: 'POST',
@@ -271,8 +267,8 @@ export default function ChatPage() {
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
       
-      const updatedMessages = [...messages, userMessage, aiMessage];
-      setMessages(updatedMessages);
+      // 直接设置更新后的消息
+      setMessages([...messages, userMessage, aiMessage]);
       
       // 如果是第一次对话，使用AI生成主题并更新
       if (isFirstConversation) {

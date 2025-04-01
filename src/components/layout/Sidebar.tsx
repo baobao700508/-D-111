@@ -5,6 +5,7 @@ import { Settings, Plus, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { TranslateFunction } from '@/types'
 
 // 侧边栏聊天历史项组件
 const SidebarItem = ({ 
@@ -67,7 +68,7 @@ interface ChatItem {
 }
 
 // 格式化日期函数
-const formatDate = (dateString: string, t: (key: string, ...args: any[]) => string) => {
+const formatDate = (dateString: string, t: TranslateFunction) => {
   const date = new Date(dateString)
   const now = new Date()
   const yesterday = new Date(now)
@@ -88,7 +89,7 @@ const formatDate = (dateString: string, t: (key: string, ...args: any[]) => stri
 }
 
 // 根据日期对聊天会话进行分组
-const groupChatsByDate = (chats: ChatItem[], t: (key: string, ...args: any[]) => string) => {
+const groupChatsByDate = (chats: ChatItem[], t: TranslateFunction) => {
   const groups: Record<string, ChatItem[]> = {}
   
   chats.forEach(chat => {

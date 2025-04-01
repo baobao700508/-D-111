@@ -1,15 +1,13 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { TranslateFunction, Language } from '@/types'
 
-// 定义语言类型
-export type Language = 'zh' | 'en'
-
-// 语言上下文接口
-interface LanguageContextType {
+// 定义语言上下文类型
+type LanguageContextType = {
   language: Language
-  setLanguage: (language: Language) => void
-  t: (key: string) => string // 翻译函数
+  setLanguage: (lang: Language) => Promise<void>
+  t: TranslateFunction
   isLoading: boolean
 }
 
@@ -113,9 +111,9 @@ const translations: Record<Language, Record<string, string>> = {
 }
 
 // 格式化翻译字符串中的参数
-const formatString = (str: string, ...args: any[]): string => {
+const formatString: TranslateFunction = (str, ...args) => {
   return str.replace(/{(\d+)}/g, (match, number) => {
-    return typeof args[number] !== 'undefined' ? args[number] : match
+    return typeof args[number] !== 'undefined' ? String(args[number]) : match
   })
 }
 
@@ -166,7 +164,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   }
   
   // 翻译函数
-  const t = (key: string, ...args: any[]): string => {
+  const t: TranslateFunction = (key, ...args) => {
     const translation = translations[language][key] || key
     return args.length ? formatString(translation, ...args) : translation
   }

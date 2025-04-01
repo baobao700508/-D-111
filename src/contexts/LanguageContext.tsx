@@ -18,7 +18,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const translations: Record<Language, Record<string, string>> = {
   zh: {
     // 通用
-    'app.name': 'Cal AI',
+    'app.name': 'ACALI',
     'app.new_chat': '新建聊天',
     'app.loading': '加载中...',
     'app.no_records': '暂无聊天记录，点击上方按钮创建新对话',
@@ -64,7 +64,7 @@ const translations: Record<Language, Record<string, string>> = {
   },
   en: {
     // General
-    'app.name': 'Cal AI',
+    'app.name': 'ACALI',
     'app.new_chat': 'New Chat',
     'app.loading': 'Loading...',
     'app.no_records': 'No chat records, click the button above to create a new conversation',

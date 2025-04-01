@@ -213,7 +213,7 @@ const Sidebar = () => {
       {/* 顶部Logo和设置区域 */}
       <div className="flex items-center justify-between p-4 border-b border-zinc-700">
         <div className="flex items-center">
-          <span className="text-xl font-bold text-white">{t('app.name')}</span>
+          <span className="text-xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">{t('app.name')}</span>
         </div>
         <Link href="/settings" className="text-zinc-400 hover:text-white transition-colors">
           <Settings size={20} />
